@@ -153,6 +153,24 @@ function addEmp() {
     const roleArr = [];
     connection.query("SELECT id, title FROM role", (err, res) => {
         if (err) throw err;
-        
+        for (i in res) {
+            const newRole = {};
+            newRole.id = res[i].id;
+            newRole.title = res[i].title;
+            roleArr.push(newRole);
+            roleTitle.push(res[i].title);
+        };
+        const empName = [];
+        const empArr = [];
+        connection.query("SELECT id, first_name, last_name FROM employee", (err, res) => {
+            if (err) throw err;
+            for (i in res) {
+                const newEmp = {};
+                newEmp.id = res[i].id;
+                const full_name = `${res[i].first_name} ${res[i].last_name}`;
+                empArr.push(newEmp);
+                empName.push(full_name);
+            };
+        })
     })
 }
