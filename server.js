@@ -213,8 +213,26 @@ function addEmp() {
                         mngrID = empArr[i].id;
                     };
                 };
-                
-            })
-        })
-    })
-}
+                let roleID;
+                for (i in roleArr) {
+                    if (ans.role_id === roleArr[i].title) {
+                        roleID = roleArr[i].id;
+                    };
+                };
+                if (ans.mngr_conf = true) {
+                    connection.query(`INSERT INTO employee (first_name, last_name, role_id, mngr_id) VALUES ("${ans.first_name}", "${ans.last_name}", "${roleID}", "${mngrID}")`, (err, res) => {
+                        if (err) throw err;
+                        console.log("Employee has been successfully added!");
+                        init();
+                    });
+                } else {
+                    connection.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ("${ans.first_name}", "${ans.last_name}", "${roleID}")`, (err, res) => {
+                        if (err) throw err;
+                        console.log("Employee successfully added!");
+                        init();
+                    });
+                };
+            });
+        });
+    });
+};
