@@ -55,6 +55,41 @@ function init () {
                     }
                 });
                 break;
+                case "VIEW all depts, roles, roles by dept, all employees, employees by manager or dept buggets":
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "view",
+                            message: "What do you want to view?",
+                            choices: ["VIEW all depts", "VIEW all roles", "VIEW all roles by dept", "VIEW all employees", "VIEW employee by manager", "GET utilized budget by dept", "BACK"]
+                        }
+                    ]).then((response) => {
+                        switch (response.view) {
+                            case "VIEW all dept":
+                                viewAllDept();
+                                break;
+                            case "VIEW all roles":
+                                viewAllRoles();
+                                break;
+                            case "VIEW all roles by dept":
+                                viewRolesByDept();
+                                break;
+                            case "VIEW all employees":
+                                viewAllEmp();
+                                break;
+                            case "VIEW employee by manager":
+                                viewEmpByMgr();
+                                break;
+                            case "GET utilized budget by dept":
+                                viewBudget();
+                                break;
+                            case "BACK":
+                                init();
+                                break;
+                        }
+                    });
+                    break;
+                case
         }
     })
 }
