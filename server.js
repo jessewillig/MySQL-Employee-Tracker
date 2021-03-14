@@ -110,6 +110,41 @@ function init () {
                                 break;
                         }
                     });
-        }
-    })
-}
+                    break;
+                case "DELETE employee, role or dept":
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "delete",
+                            message: "What do you want to delete?",
+                            choices: ["DELETE employee", "DELETE role", "DELETE dept", "BACK"]
+                        }
+                    ]).then((response) => {
+                        switch (response.delete) {
+                            case "DELETE employee":
+                                deleteEmp();
+                                break;
+                            case "DELETE role":
+                                deleteRole();
+                                break;
+                            case "DELETE dept":
+                                deleteDept();
+                                break;
+                            case "BACK":
+                                init();
+                                break;
+                        }
+                    });
+                    break;
+                case "QUIT":
+                    console.log("See ya later!");
+                    connection.end();
+                    break;
+                default:
+                    console.log("Please choose a valid selection");
+                    init();
+                    break;
+        };
+    });
+};
+
