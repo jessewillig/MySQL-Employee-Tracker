@@ -89,7 +89,27 @@ function init () {
                         }
                     });
                     break;
-                case
+                case "UPDATE employee manager or employee role":
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "update",
+                            message: "What do you want to update?",
+                            choices: ["UPDATE employee manager", "UPDATE employee role", "BACK"]
+                        }
+                    ]).then((response) => {
+                        switch (response.update) {
+                            case "UPDATE employee manager":
+                                updateEmpMgr();
+                                break;
+                            case "UPDATE employee role":
+                                updateEmpRole();
+                                break;
+                            case "BACK":
+                                init();
+                                break;
+                        }
+                    });
         }
     })
 }
