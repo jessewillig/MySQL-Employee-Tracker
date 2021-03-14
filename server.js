@@ -171,6 +171,16 @@ function addEmp() {
                 empArr.push(newEmp);
                 empName.push(full_name);
             };
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "Enter employee first name: ",
+                    name: "first_name"
+                },
+                {
+                    
+                }
+            ])
         })
     })
 }
