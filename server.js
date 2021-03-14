@@ -178,9 +178,43 @@ function addEmp() {
                     name: "first_name"
                 },
                 {
-                    
+                    type: "input",
+                    message: "Enter employee last name: ",
+                    name: "last_name"
+                },
+                {
+                    type: "list",
+                    message: "Enter employee role: ",
+                    choices: roleTitle,
+                    name: "role_id"
+                },
+                {
+                    type: "confirm",
+                    message: "Is this employee going to be a manager?",
+                    name: "mngr_conf"
+                },
+                {
+                    type: "list",
+                    message: "Select manager for employee: ",
+                    choices: empName,
+                    name: "mngr_name",
+                    when: function (ans) {
+                        if (ans.mngr_conf === true) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
                 }
-            ])
+            ]).then((ans) => {
+                let mngrID;
+                for (i in empArr) {
+                    if (ans.mngr_name === empArr[i].name) {
+                        mngrID = empArr[i].id;
+                    };
+                };
+                
+            })
         })
     })
 }
