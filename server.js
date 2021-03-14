@@ -148,3 +148,11 @@ function init () {
     });
 };
 
+function addEmp() {
+    const roleTitle = [];
+    const roleArr = [];
+    connection.query("SELECT id, title FROM role", (err, res) => {
+        if (err) throw err;
+        
+    })
+}
