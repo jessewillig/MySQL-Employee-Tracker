@@ -100,7 +100,7 @@ function init () {
                     ]).then((response) => {
                         switch (response.update) {
                             case "UPDATE employee manager":
-                                updateEmpMgr();
+                                updateEmpMngr();
                                 break;
                             case "UPDATE employee role":
                                 updateEmpRole();
@@ -432,6 +432,43 @@ function viewBudget () {
 };
 
 // update manager function
-function updateEmpMgr () {
-    
-}
+function updateEmpMngr () {
+    const nameArr = [];
+    connection.query("SELECT id, first_name, last_name, mngr_id FROM employee", (err, res) => {
+        if (err) throw err;
+        for (i in res) {
+            nameArr.push(`${res[i].first_name} ${res[i].last_name}`);
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select employee to update: ",
+                choices: nameArr,
+                name: "empSelection"
+            },
+            {
+                type: "list",
+                message: "Select new manager for this employee",
+                choices: nameArr,
+                name: "newMngr"
+            }
+        ]).then((ans) => {
+            let mngrID;
+            for (i in res) {
+                if (`${res[i].first_name} ${res[i].last_name}` === ans.newMngr) {
+                    mngrID = res[i].id;
+                };
+            };
+            if (ans.empSelection === ans.newMngr) {
+                console.log("Employee and manager cannot be the same!\nPlease try again...");
+                updateEmpMngr();
+            } else {
+                connection.query(`UPDATE employee SET mngr_id = "${mngrID}" WHERE CONCAT(first_name, " ", last_name) = "${ans.empSelection}"`, (err, res) => {
+                    if (err) throw err;
+                    console.log("Employee's manager has been successfully updated.");
+                    init();
+                });
+            };
+        });
+    });
+};
