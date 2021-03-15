@@ -238,5 +238,44 @@ function addEmp () {
 };
 
 function addRole () {
-
-}
+    const deptArr = [];
+    connection.query("SELECT id, name FROM dept;", (err, res) => {
+        if (err) throw err;
+        for (i in res) {
+            roleObj = {};
+            roleObj.id = res[i].id;
+            roleObj.name = res[i].name;
+            deptArr.push(roleObj);
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Enter dept name for new role: ",
+                choices: deptArr,
+                name: "deptName"
+            },
+            {
+                type: "input",
+                message: "Enter title of new role: ",
+                name: "role"
+            },
+            {
+                type: "number",
+                message: "Enter salary for new role: ",
+                name: "salary"
+            }
+        ]).then((ans) => {
+            let deptID;
+            for (i in deptArr) {
+                if (deptArr[i].name === ans.deptName) {
+                    deptID = deptArr[i].id;
+                };
+            };
+            connection.query(`INSERT INTO role (title, salary, dept_ID) VALUES ("${ans.roleName}", "${ans.salary}", "${deptID}")`, (err, res) => {
+                if (err) throw err;
+                console.log("Role successfully added!");
+                init();
+            });
+        });
+    });
+};
