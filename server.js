@@ -353,3 +353,37 @@ function viewRolesByDept () {
         });
     });
 };
+
+function viewEmpByMgr () {
+    connection.query("SELECT id, first_name, last_name, manager_id FROM employee", (err, data) => {
+        if (err) throw err;
+        const mngrList = [];
+        for (i in data)v{
+            for (j in data) {
+                if (data[j].mngr_id === data[i].id) {
+                    mngrList.push(`${data[i].first_name} ${data[i].last_name}`);
+                };
+            };
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select manager to view employees",
+                choices: mngrList,
+                name: "mngrChoice"
+            }
+        ]).then((ans) => {
+            let mngrID;
+            for (k in empData) {
+                if (ans.mngrChoice === `${empData[k].first_name} ${empData[k].last_name}`) {
+                    mngrID = data[k].id;
+                };
+            };
+            connection.query(`SELECT first_name AS "First Name", last_name AS "Last Name", title AS "Role", dept.name AS "Dept", salary AS "Salary" FROM employee JOIN role ON role_id = ole.id JOIN department ON role.department_id = department.id WHERE employee.manager_id = "${mngrID}"`, (err, res) => {
+                if (err) throw err;
+                console.table(res);
+                init();
+            });
+        });
+    });
+};
