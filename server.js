@@ -279,3 +279,19 @@ function addRole () {
         });
     });
 };
+
+function addDept () {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter dept name: ",
+            name: "deptName"
+        }
+    ]).then((ans) => {
+        connection.query(`INSERT INTO dept (name) VALUE ("${ans.deptName}")`, (err, res) => {
+            if (err) throw err;
+            console.log(`Dept "${ans.deptName}" has been successfully added!`);
+            init();
+        });
+    });
+};
