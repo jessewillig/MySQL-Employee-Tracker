@@ -325,3 +325,31 @@ function viewAllEmp () {
         init();
     });
 };
+
+function viewRolesByDept () {
+    connection.query("SELECT id, name FROM dept;", (err, res) => {
+        const deptNames = [];
+        for (i in res) {
+            deptNames.push(res[i].name);
+        }
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select dept to view roles",
+                choices: deptNames,
+                name: "deptName"
+            }
+        ]).then((ans) => {
+            let deptID;
+            for (j in res) {
+                if (ans.deptName === res[j].name) {
+                    deptID = res[j].id;
+                };
+            };
+            connection.query(`SELECT title, salary FROM role WHERE dept_id = "${deptID}`, (err, data) => {
+                console.table(data);
+                init();
+            });
+        });
+    });
+};
