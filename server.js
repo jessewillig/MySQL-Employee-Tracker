@@ -295,3 +295,12 @@ function addDept () {
         });
     });
 };
+
+function viewAllDept () {
+    connection.query(`SELECT name AS "Dept" FROM dept`, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        init();
+    });
+};
+
