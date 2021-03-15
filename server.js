@@ -304,3 +304,24 @@ function viewAllDept () {
     });
 };
 
+function viewAllEmp () {
+    connection.query(`SELECT employee.id, first_name, last_name, salary, mngr_id, dept.name, role.title FROM employee JOIN role ON employee.role_id = role.id JOIN dept ON role.dept_id = dept.id ORDER BY dept.name;`, (err, res) => {
+        if (err) throw err;
+        const allEmp = [];
+        for (i in res) {
+            const newView = {};
+            newView.Name = `${res[i].first_name} ${res[i].last_name}`;
+            newView.Role = res[i].title;
+            newView.Dept = res[i].name;
+            newView.Salary = `${res[i].salary} / Year`;
+            for (j in res) {
+                if (res[i].mngr_id === res[j].id) {
+                    newView.Mngr = `${res[j].first_name} ${res[j].last_name};`
+                };
+            };
+            allEmp.push(newView);
+        };
+        console.table(allEmp);
+        init();
+    });
+};
