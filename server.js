@@ -148,6 +148,7 @@ function init () {
     });
 };
 
+// add employee function
 function addEmp () {
     const roleTitle = [];
     const roleArr = [];
@@ -237,6 +238,7 @@ function addEmp () {
     });
 };
 
+// add role function
 function addRole () {
     const deptArr = [];
     connection.query("SELECT id, name FROM dept;", (err, res) => {
@@ -280,6 +282,7 @@ function addRole () {
     });
 };
 
+// add department function
 function addDept () {
     inquirer.prompt([
         {
@@ -296,6 +299,7 @@ function addDept () {
     });
 };
 
+// view all departments function
 function viewAllDept () {
     connection.query(`SELECT name AS "Dept" FROM dept`, (err, res) => {
         if (err) throw err;
@@ -304,6 +308,7 @@ function viewAllDept () {
     });
 };
 
+// view all employees function
 function viewAllEmp () {
     connection.query(`SELECT employee.id, first_name, last_name, salary, mngr_id, dept.name, role.title FROM employee JOIN role ON employee.role_id = role.id JOIN dept ON role.dept_id = dept.id ORDER BY dept.name;`, (err, res) => {
         if (err) throw err;
@@ -326,6 +331,7 @@ function viewAllEmp () {
     });
 };
 
+// view roles by department function
 function viewRolesByDept () {
     connection.query("SELECT id, name FROM dept;", (err, res) => {
         const deptNames = [];
@@ -354,6 +360,7 @@ function viewRolesByDept () {
     });
 };
 
+// view employee by manager function
 function viewEmpByMngr () {
     connection.query("SELECT id, first_name, last_name, manager_id FROM employee", (err, data) => {
         if (err) throw err;
@@ -387,3 +394,44 @@ function viewEmpByMngr () {
         });
     });
 };
+
+// view budget function
+function viewBudget () {
+    const newQuery = `SELEct COUNT(role_id) AS role_count, role.title, role.salary, dept.name FROM employee JOIN role ON role_id = role.id JOIN dept ON dept_id = dept.id GROUP BY role_id;`
+    connection.query(newQuery, (err, res) => {
+        if (err) throw err;
+        const totalBudget = [];
+        const deptList = [];
+        for (i in res) {
+            const newBudgetObj = {};
+            newBudgetObj.role = res[i].title;
+            newBudgetObj.total_cost = res[i].salary * res[i].role_count;
+            newBudgetObj.dept = res[i].name;
+            totalBudget.push(newBudgetObj);
+            deptList.push(res[i].name);
+        };
+        const newDeptList = [... new Set(deptList)];
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select dept to view utilized budget",
+                choices: "newDeptList",
+                name: "deptChoice"
+            }
+        ]).then((ans) => {
+            let totalBudget = 0;
+            for (j in totalBudget) {
+                if (totalBudget[j].dept === ans.deptChoice) {
+                    totalBudget += totalBudget[j].total_cost;
+                };
+            };
+            console.table([{ Dept: ans.deptChoice, Budget: `${totalBudget}` }]);
+            init();
+        });
+    });
+};
+
+// update manager function
+function updateEmpMgr () {
+    
+}
