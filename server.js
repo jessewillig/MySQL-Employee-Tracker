@@ -78,7 +78,7 @@ function init () {
                                 viewAllEmp();
                                 break;
                             case "VIEW employee by manager":
-                                viewEmpByMgr();
+                                viewEmpByMngr();
                                 break;
                             case "GET utilized budget by dept":
                                 viewBudget();
@@ -354,7 +354,7 @@ function viewRolesByDept () {
     });
 };
 
-function viewEmpByMgr () {
+function viewEmpByMngr () {
     connection.query("SELECT id, first_name, last_name, manager_id FROM employee", (err, data) => {
         if (err) throw err;
         const mngrList = [];
