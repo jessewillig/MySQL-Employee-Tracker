@@ -472,3 +472,55 @@ function updateEmpMngr () {
         });
     });
 };
+
+// update employee role function
+function updateEmpRole () {
+    const namesArr = [];
+    let empArr;
+    const titlesArr = [];
+    let roleArr;
+    connection.query("SELECT id, first_name, last_name FROM employee", (err, roleData) => {
+        if (err) throw err;
+        for (j in roleData) {
+            titlesArr.push(roleData[j].title)
+        };
+        connection.query("SELECT id, first_name, last_name FROM employee", (err, empData) => {
+            if (err) throw err;
+            for (i in empData) {
+                empArr = empData;
+                const fullName = `${empData[i].first_name} ${empData[i].last_name}`;
+                namesArr.push(fullName);
+                roleArr = empData;
+            };
+            inquirer.prompt([
+                {
+                    type: "list",
+                    message: "Whose role are you looking to change?",
+                    choices: namesArr,
+                    name: "empSelection"
+                },
+                {
+                    type: "list",
+                    message: "What is this employees new role?",
+                    choices: titlesArr,
+                    name: "newRole"
+                }
+            ]).then((ans) => {
+                let roleID;
+                for (i in roleData) {
+                    if (roleData[i].title === ans.newRole) {
+                        roleID = roleData[i].id;
+                    };
+                };
+                console.log("new role id: " + roleID);
+                connection.query(`UPDATE employee SET role_id = "${roleID}" WHERE CONCAT(first_name, " ", last_name) = "${ans.empSelection}"`, (err, res) => {
+                    if (err) throw err;
+                    console.log("Employee role has been successfully updated!");
+                    init();
+                });
+            });
+        });
+    });
+};
+
+// 
