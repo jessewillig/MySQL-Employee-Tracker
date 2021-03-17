@@ -365,7 +365,7 @@ function viewEmpByMngr () {
     connection.query("SELECT id, first_name, last_name, manager_id FROM employee", (err, data) => {
         if (err) throw err;
         const mngrList = [];
-        for (i in data)v{
+        for (i in data) {
             for (j in data) {
                 if (data[j].mngr_id === data[i].id) {
                     mngrList.push(`${data[i].first_name} ${data[i].last_name}`);
