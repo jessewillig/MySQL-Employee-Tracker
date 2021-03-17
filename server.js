@@ -523,4 +523,47 @@ function updateEmpRole () {
     });
 };
 
-// 
+// delete employee function
+function deleteEmp () {
+    const empList = [];
+    const mngrList = [];
+    connection.query("SELECT id, first_name, last_name, mngr_id FROM employee", (err, empData) => {
+        if (err) throw err;
+        for (i in empData) {
+            empList.push(`${empData[i].first_name} ${empData[i].last_name}`);
+        };
+        for (k in empData) {
+            for (j in empData) {
+                if (empData[j].mngr_id === empData[k].id) {
+                    mngrList.push(`${empData[k].first_name} ${empData[k].last_name}`);
+                };
+            };
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select the employee you wish to delete (managers cannot be deleted).",
+                choices: empList,
+                name: "empSelection"
+            }
+        ]).then((ans) => {
+            if (mngrList.includes(ans.empSelection)) {
+                console.log(`\n"${ans.empSelection}" is a manager and cannot be deleted\nNOTE: To delete a manager, all empoyees under that manager must be reassigned\n(Select 'Update Employee Manager' on Main Menu\n\n)`);
+                init();
+            } else {
+                let empID;
+                for (l in empData) {
+                    if (ans.empSelection === `${empData[l].first_name} ${empData[l].last_name}`) {
+                        empData[l].id;
+                    };
+                };
+                connection.query(`DELETE FROM employee WHERE id = "${empID}`, (err, res) => {
+                    if (err) throw err;
+                    console.log("Employee successfully deleted.");
+                    init();
+                });
+            };
+        });
+    });
+};
+
