@@ -602,3 +602,34 @@ function deleteRole () {
 };
 
 // delete department function
+function deleteRole () {
+    const deptArr = [];
+    const fullDept = [];
+    connection.query(`SELECT name, COUNT(role.id) AS count FROM dept LEFT JOIN role ON dept_id = dept.id GROUP BY name`, (err, res) => {
+        for (i in data) {
+            deptArr.push(data[i].name);
+            if (data[i].count !== 0) {
+                fullDept.push(data[i].name);
+            };
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select dept you wish to delete. Filled depts cannot be deleted!",
+                choices: deptArr,
+                name: "deptselection"
+            }
+        ]).then((ans) => {
+            if (fullDept.includes(ans.deptSelection)) {
+                console.log(`\nThe "${ans.deptSelection}" dept has listed roles on file and cannot be deleted!\nNOTE: To delete a department, first delete all roles in that department\n(Select 'Delete Role' in Main Menu)\n`);
+                init();
+            } else {
+                connection.query(`DELETE FROM dept WHERE name = "${ans.deptSelection}"`, (err, res) => {
+                    if (err) throw err;
+                    console.log("Dept has been successfully deleted.");
+                    init();
+                });
+            };
+        });
+    });
+};
