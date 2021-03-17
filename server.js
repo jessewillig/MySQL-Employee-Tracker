@@ -567,3 +567,38 @@ function deleteEmp () {
     });
 };
 
+function deleteRole () {
+    connection.query(`SELECT title, COUNT(employee.id) AS count FROM role LEFT JOIN employee ON role.id = employee.role_id GROUP BY employee.id`, (err, data) => {
+        if (err) throw err;
+        console.table(data);
+        const titlesArr = [];
+        const rolesArr = [];
+        for (i in data) {
+            titlesArr.push(`${data[i].title}`);
+            if (data[i].count !== 0) {
+                rolesArr.push(data[i].title);
+            };
+        };
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select role to delete. Filled roles cannot be deleted.",
+                choices: titlesArr,
+                name: "roleSelection"
+            }
+        ]).then((ans) => {
+            if (rolesArr.includes(ans.roleSelection)) {
+                console.log(`\n\nThe role of "${ans.roleSelection}" is filled and cannot be deleted!\n NOTE: to delete a role ALL employees in that role must be reassigned\nSelect "Update Employee Role" on Main Menu\n`);
+                init();
+            } else {
+                connection.query(`DELETE FROM role WHERE title = "${ans.roleSelection}"`, (err, res) => {
+                    if (err) throw err;
+                    console.log("Role successfully deleted.");
+                    init();
+                });
+            };
+        });
+    });
+};
+
+// delete department function
