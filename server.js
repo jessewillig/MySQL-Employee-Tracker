@@ -386,7 +386,7 @@ function viewEmpByMngr () {
                     mngrID = data[k].id;
                 };
             };
-            connection.query(`SELECT first_name AS "First Name", last_name AS "Last Name", title AS "Role", dept.name AS "Dept", salary AS "Salary" FROM employee JOIN role ON role_id = ole.id JOIN department ON role.department_id = department.id WHERE employee.manager_id = "${mngrID}"`, (err, res) => {
+            connection.query(`SELECT first_name AS "First Name", last_name AS "Last Name", title AS "Role", dept.name AS "Dept", salary AS "Salary" FROM employee JOIN role ON role_id = ole.id JOIN dept ON role.dept_id = dept.id WHERE employee.manager_id = "${mngrID}"`, (err, res) => {
                 if (err) throw err;
                 console.table(res);
                 init();
@@ -621,7 +621,7 @@ function deleteRole () {
             }
         ]).then((ans) => {
             if (fullDept.includes(ans.deptSelection)) {
-                console.log(`\nThe "${ans.deptSelection}" dept has listed roles on file and cannot be deleted!\nNOTE: To delete a department, first delete all roles in that department\n(Select 'Delete Role' in Main Menu)\n`);
+                console.log(`\nThe "${ans.deptSelection}" dept has listed roles on file and cannot be deleted!\nNOTE: To delete a dept, first delete all roles in that dept\n(Select 'Delete Role' in Main Menu)\n`);
                 init();
             } else {
                 connection.query(`DELETE FROM dept WHERE name = "${ans.deptSelection}"`, (err, res) => {
