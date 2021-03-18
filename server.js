@@ -61,7 +61,7 @@ function init () {
                             type: "list",
                             name: "view",
                             message: "What do you want to view?",
-                            choices: ["VIEW all depts", "VIEW all roles", "VIEW all roles by dept", "VIEW all employees", "VIEW employee by manager", "GET utilized budget by dept", "BACK"]
+                            choices: ["VIEW all dept", "VIEW all roles", "VIEW all roles by dept", "VIEW all employees", "VIEW employee by manager", "GET utilized budget by dept", "BACK"]
                         }
                     ]).then((response) => {
                         switch (response.view) {
@@ -301,11 +301,21 @@ function addDept () {
 
 // view all departments function
 function viewAllDept () {
+    // console.log("Hi");
     connection.query(`SELECT name AS "Dept" FROM dept`, (err, res) => {
         if (err) throw err;
         console.table(res);
         init();
     });
+};
+
+// view all roles
+function viewAllRoles() {
+    connection.query(`SELECT title AS "Roles", dept.name AS Department, salary AS "Curr Salary" FROM role JOIN dept ON role.dept_id = dept.id ORDER BY dept.name`, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        init();
+    })
 };
 
 // view all employees function
@@ -352,7 +362,9 @@ function viewRolesByDept () {
                     deptID = res[j].id;
                 };
             };
-            connection.query(`SELECT title, salary FROM role WHERE dept_id = "${deptID}`, (err, data) => {
+            connection.query(`SELECT title, salary FROM role WHERE dept_id = "${deptID}"`, (err, data) => {
+                // console.log("Hi");
+                if (err) throw err;
                 console.table(data);
                 init();
             });
@@ -362,13 +374,13 @@ function viewRolesByDept () {
 
 // view employee by manager function
 function viewEmpByMngr () {
-    connection.query("SELECT id, first_name, last_name, manager_id FROM employee", (err, data) => {
+    connection.query("SELECT id, first_name, last_name, mngr_id FROM employee", (err, empData) => {
         if (err) throw err;
         const mngrList = [];
-        for (i in data) {
-            for (j in data) {
-                if (data[j].mngr_id === data[i].id) {
-                    mngrList.push(`${data[i].first_name} ${data[i].last_name}`);
+        for (i in empData) {
+            for (j in empData) {
+                if (empData[j].mngr_id === empData[i].id) {
+                    mngrList.push(`${empData[i].first_name} ${empData[i].last_name}`);
                 };
             };
         };
@@ -383,10 +395,10 @@ function viewEmpByMngr () {
             let mngrID;
             for (k in empData) {
                 if (ans.mngrChoice === `${empData[k].first_name} ${empData[k].last_name}`) {
-                    mngrID = data[k].id;
+                    mngrID = empData[k].id;
                 };
             };
-            connection.query(`SELECT first_name AS "First Name", last_name AS "Last Name", title AS "Role", dept.name AS "Dept", salary AS "Salary" FROM employee JOIN role ON role_id = ole.id JOIN dept ON role.dept_id = dept.id WHERE employee.manager_id = "${mngrID}"`, (err, res) => {
+            connection.query(`SELECT first_name AS "First Name", last_name AS "Last Name", title AS "Role", dept.name AS "Dept", salary AS "Salary" FROM employee JOIN role ON role_id = role.id JOIN dept ON role.dept_id = dept.id WHERE employee.mngr_id = "${mngrID}"`, (err, res) => {
                 if (err) throw err;
                 console.table(res);
                 init();
@@ -415,7 +427,7 @@ function viewBudget () {
             {
                 type: "list",
                 message: "Select dept to view utilized budget",
-                choices: "newDeptList",
+                choices: newDeptList,
                 name: "deptChoice"
             }
         ]).then((ans) => {
@@ -479,7 +491,7 @@ function updateEmpRole () {
     let empArr;
     const titlesArr = [];
     let roleArr;
-    connection.query("SELECT id, first_name, last_name FROM employee", (err, roleData) => {
+    connection.query("SELECT id, title FROM role", (err, roleData) => {
         if (err) throw err;
         for (j in roleData) {
             titlesArr.push(roleData[j].title)
@@ -554,10 +566,10 @@ function deleteEmp () {
                 let empID;
                 for (l in empData) {
                     if (ans.empSelection === `${empData[l].first_name} ${empData[l].last_name}`) {
-                        empData[l].id;
+                        empID = empData[l].id;
                     };
                 };
-                connection.query(`DELETE FROM employee WHERE id = "${empID}`, (err, res) => {
+                connection.query(`DELETE FROM employee WHERE id = "${empID}"`, (err, res) => {
                     if (err) throw err;
                     console.log("Employee successfully deleted.");
                     init();
@@ -568,7 +580,7 @@ function deleteEmp () {
 };
 
 function deleteRole () {
-    connection.query(`SELECT title, COUNT(employee.id) AS count FROM role LEFT JOIN employee ON role.id = employee.role_id GROUP BY employee.id`, (err, data) => {
+    connection.query(`SELECT title, COUNT(employee.id) AS count FROM role LEFT JOIN employee ON role.id = employee.role_id GROUP BY employee.id;`, (err, data) => {
         if (err) throw err;
         console.table(data);
         const titlesArr = [];
@@ -602,10 +614,10 @@ function deleteRole () {
 };
 
 // delete department function
-function deleteRole () {
+function deleteDept () {
     const deptArr = [];
     const fullDept = [];
-    connection.query(`SELECT name, COUNT(role.id) AS count FROM dept LEFT JOIN role ON dept_id = dept.id GROUP BY name`, (err, res) => {
+    connection.query(`SELECT name, COUNT(role.id) AS count FROM dept LEFT JOIN role ON dept_id = dept.id GROUP BY name`, (err, data) => {
         for (i in data) {
             deptArr.push(data[i].name);
             if (data[i].count !== 0) {
